@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, FlatList, StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, Pressable, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import uuid from 'react-native-uuid';
-
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 interface ITodo {
   id: string,
@@ -18,7 +18,11 @@ export default function App() {
   const handleAddTodo = () => {
     Keyboard.dismiss();
     if (!todo) {
-      alert('input todo')
+      Alert.alert('Không thể Add Todo', 'Vui lòng nhập todo',
+        [
+          { text: 'Ok', style: 'cancel' }, // Nút hủy không xóa
+        ]
+      );
     }
     else {
       const createId = uuid.v4();
@@ -44,26 +48,39 @@ export default function App() {
       <View style={styles.container}>
         {/* header */}
         <Text style={styles.header}>To Do App</Text>
-        {/* body */}
-        <View style={styles.body}>
+
+        {/* input form */}
+        <View style={styles.inputForm}>
           <TextInput style={styles.inputTodo} value={todo} onChangeText={(value => setTodo(value))} />
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.todoButton} onPress={() => handleAddTodo()}>
-              <Text>Click me</Text>
+              <Text>Add Todo</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <FlatList
-          data={listTodo}
-          keyExtractor={item => item.id + " "}
-          renderItem={({ item }) => {
-            return (
-              <Pressable onPress={() => confirmDeleteTodo(item.id)}>
-                <Text style={styles.todoItem} >{item.name}</Text>
-              </Pressable>
-            )
-          }}
-        />
+
+        {/* list todo */}
+        <View style={styles.listTodo}>
+          <FlatList
+            data={listTodo}
+            keyExtractor={item => item.id + " "}
+            renderItem={({ item }) => {
+              return (
+                <Pressable onPress={() => confirmDeleteTodo(item.id)}>
+                  <View style={styles.todo}>
+                    <View style={styles.todoText} >
+                      <Text style={styles.text}>{item.name}</Text>
+                    </View>
+                    <FontAwesome style={styles.todoFont} name="trash" size={30} color="orange" />
+                  </View>
+
+
+                </Pressable>
+              )
+            }}
+          />
+        </View>
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -82,12 +99,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold'
   },
-  body: {
+  inputForm: {
     paddingHorizontal: 20,
-
-  },
-  buttonView: {
-    alignItems: 'center'
   },
   inputTodo: {
     marginTop: 10,
@@ -96,11 +109,8 @@ const styles = StyleSheet.create({
     padding: 5,
     width: '100%'
   },
-  todoItem: {
-    margin: 10,
-    padding: 10,
-    fontSize: 15,
-    backgroundColor: '#299FF5',
+  buttonView: {
+    alignItems: 'center'
   },
   todoButton: {
     margin: 10,
@@ -109,5 +119,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 100,
     borderRadius: 10,
-  }
+  },
+  listTodo: {
+    flex: 1,
+  },
+  todo: {
+    flexDirection: "row",
+    // flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: '#299FF5',
+    margin: 10,
+    padding: 7,
+
+  },
+  todoText: {
+    width: "90%"
+
+  },
+  text: {
+    fontSize: 20
+  },
+  todoFont: {
+    width: "7%",
+    alignContent: 'center'
+  },
+
 });
